@@ -1,9 +1,7 @@
 $(document).ready(function () {
-    
+
     // edit link: https://www.npoint.io/docs/01b53c694243426560d6
     const scheduleUrl = 'https://api.npoint.io/01b53c694243426560d6'
-
-    const selectedDay =$('#dayInput').val().trim().toUpperCase()
     const btn = $('#submitDay')
 
     const bellSchedule = {
@@ -16,31 +14,35 @@ $(document).ready(function () {
     }
 
 
-$('#submitDay').on('click', function() {
-
-    if(!['A','B','C','D','E','F','G'].includes(selectedDay)) {
-        alert("Pick a day in the range!")
-    }
-    else {
-        $.ajax({
-            type: "GET",
-            url: "https://api.npoint.io/01b53c694243426560d6",
-            success: function (data) {
-                let schedule = data.schedule
-                let daySchedule = schedule.filter( classItem => classItem.days.includes(selectedDay) )
-
-                console.log(daySchedule)
-                renderHTML(schedule)
-            },
-            error: function() {
-                console.log('Connection error')
-            }
-        });
-    }
+    $('#submitDay').on('click', function () {
+        const selectedDay = $('#dayInput').val().trim().toUpperCase()
+        let days = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+        console.log(selectedDay)
+        if (!days.includes(selectedDay)) {
+            alert("Pick a day in the range!");
+        } else {
+            $.ajax({
+                type: "GET",
+                url: "https://api.npoint.io/01b53c694243426560d6",
+                success: function (data) {
+                    let schedule = data.schedule
+                    let daySchedule = schedule.filter(classItem => classItem.days.includes(selectedDay))
+                    console.log(daySchedule)
+                    let htmlString = "<tr>"
+                    daySchedule.forEach((classItem) => {
+                        htmlString += `<td>${classItem.period}</td>
+                                        <td>NOT DONE</td>
+                                        <td>${classItem.class}</td>
+                                        <td>${classItem.teacher}</td>
+                                        <td>${classItem.room}</td>`
+                    })
+                    htmlString += "</tr>"
+                    $('#scheduleList').append(htmlString)
+                },
+                error: function () {
+                    console.log('Connection error')
+                }
+            })
+        }
+    })
 })
-
-function renderHTML(data) {
-
-}
-
-});
